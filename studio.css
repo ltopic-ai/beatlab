@@ -1,0 +1,58 @@
+:root{font:15px/1.5 system-ui,sans-serif;color:#f5f4fb;background:#10111a;color-scheme:dark;--edge:#37384e;--muted:#b9bad2;--lime:#d8f784;--panel:#1a1b28}
+*{box-sizing:border-box}
+body{margin:0}
+main{width:min(1400px,100%);margin:auto;padding:clamp(12px,3vw,40px)}
+header,.transport,.actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+header{justify-content:space-between;margin-bottom:22px;gap:16px}
+h1{font-size:clamp(44px,8vw,84px);line-height:.95;letter-spacing:-.075em;margin:0}
+h1 span{color:var(--lime)}
+.eyebrow{font-size:.75rem;letter-spacing:.18em;color:var(--lime);font-weight:700;margin:0 0 8px}
+a{color:var(--lime);padding:8px}
+button,.file,select,input[type=number]{font:inherit;min-height:40px;color:inherit;background:#292a3e;border:1px solid var(--edge);border-radius:8px;padding:6px 12px}
+button,.file{cursor:pointer}
+button:disabled,.file:has(input:disabled){opacity:.55;cursor:default}
+button:not(:disabled):hover,.file:hover{border-color:var(--lime)}
+:focus-visible,.file:focus-within{outline:2px solid var(--lime);outline-offset:2px}
+.primary{background:var(--lime);color:#171b10;border-color:var(--lime);font-weight:750}
+.file{position:relative;display:inline-flex;align-items:center}
+.file input{position:absolute;inset:0;width:100%;opacity:0;cursor:pointer}
+input[type=number]{width:5.5rem;padding:6px 8px}
+.status{color:var(--muted);margin:10px 0 16px;min-height:1.5em}
+.workspace,section{min-width:0;background:var(--panel);border:1px solid var(--edge);border-radius:14px;padding:clamp(10px,2vw,20px);margin:0}
+legend,h2{font-weight:760;font-size:1.28rem;margin:0 0 10px}
+legend{padding:0 8px}
+.arrangement{margin-bottom:12px}
+.timeline{display:flex;border:1px solid var(--edge);border-radius:9px;overflow:hidden}
+.track-labels{flex:none;width:clamp(100px,16vw,150px);background:#232437}
+.ruler{height:38px;display:flex;align-items:center;padding:0 8px;color:var(--muted)}
+.lanes .ruler{padding:0}
+.ruler button{width:96px;height:38px;min-height:0;border:0;border-radius:0;border-right:1px solid var(--edge);background:#202132;text-align:left}
+.ruler button[aria-pressed=true]{color:var(--lime);font-weight:750}
+.track-label{height:65px;padding:4px 8px;border-top:1px solid var(--edge)}
+.track-label>div{display:flex;align-items:center;gap:3px}
+input[type=range]{width:100%;min-width:0;accent-color:var(--lime)}
+.mute{padding:3px 5px;min-height:26px;font-size:.75rem}
+.mute[aria-pressed=true]{color:#ffb3bb}
+.scroll,.drums{min-width:0;overflow:auto}
+.lanes{position:relative}
+.lane{position:relative;height:65px;border-top:1px solid var(--edge);background:repeating-linear-gradient(90deg,transparent 0 23px,#292a3b 23px 24px,transparent 24px 47px,#292a3b 47px 48px,transparent 48px 71px,#292a3b 71px 72px,transparent 72px 95px,#474861 95px 96px)}
+.clip{position:absolute;top:9px;height:44px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;color:#171423;background:#c5b5ff;border:1px solid transparent;padding:4px 7px;font-weight:700}
+.lane-1 .clip{background:#82e4c3}.lane-2 .clip{background:#ffd096}.lane-3 .clip{background:#ffabc4}
+.clip[aria-pressed=true]{outline:2px solid white;outline-offset:-3px}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:#fafafa;pointer-events:none}
+.inspector{margin-top:12px}.danger{color:#ffb3bb}
+.editors{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.drums{margin-top:12px;padding:3px}
+.drum-row{display:grid;grid-template-columns:74px repeat(16,minmax(30px,1fr));gap:4px;margin-bottom:4px}
+.pad{padding:3px;font-size:.8rem;text-align:left;touch-action:manipulation}
+.step{padding:0;min-height:34px;border-radius:5px}
+.step.downbeat{border-left:2px solid #888aa1}
+.step[aria-pressed=true]{background:#bb9eff;border-color:#bb9eff}
+.step[data-playing=true]{box-shadow:inset 0 0 0 2px var(--lime);opacity:1}
+.keyboard{display:flex;overflow:auto;margin:12px 0 18px;padding:3px}
+.keyboard button{min-width:35px;flex:1;height:110px;display:flex;align-items:flex-end;justify-content:center;padding:3px;border-radius:0 0 6px 6px;touch-action:none}
+.white-key{color:#222136;background:#f3efff}.black-key{background:#313149;height:76px!important}
+.keyboard button[aria-pressed=true]{background:var(--lime);color:#111}
+.audio-actions{margin-top:7px}.audio-actions strong{width:52px}
+@media(max-width:1000px){.editors{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:540px){main{padding:12px}.transport{gap:6px}.audio-actions strong{width:100%}.track-label button{font-size:.7rem}.keyboard button{min-width:37px}}

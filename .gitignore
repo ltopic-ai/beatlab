@@ -1,0 +1,6 @@
+node_modules/
+dist/
+*.wav
+*.webm
+*.m4a
+beatlab-projet.json
