@@ -5,7 +5,7 @@ Chaque étape se prépare dans une branche dédiée du dépôt existant. La dém
 | Phase | Lot proposé | Preuve attendue |
 | --- | --- | --- |
 | 0 · Audit | Vérifier V1 et V2, documenter l’existant et préparer les décisions. | État GitHub, tests et risques consignés. |
-| 1 · Base fiable et accès | Corriger le kit de compatibilité V1, l’alignement des limites et le risque de remplacement après erreur. Vérifier Chrome Android, puis essayer l’accès HTTPS privé. | Un rythme V1 garde ses sons. Le WAV V2 contient les pistes du mix. Le site refuse un appareil hors de l’accès autorisé. |
+| 1 · Base fiable et accès | Corriger le kit de compatibilité V1, l’alignement des limites et le risque de remplacement après erreur. Vérifier Chrome Android et préparer GitHub Pages. | Un rythme V1 garde ses sons. Le WAV V2 contient les pistes du mix. Le site et ses ressources répondent en HTTPS après l’accord de publication. |
 | 2 · Import et capture | Ajouter audio/vidéo local, niveau, chronomètre, réécoute, découpe et transfert. Étudier à part le son d’onglet. | Tester MP3, WAV, MP4 et WebM avec des fichiers autorisés, plus les erreurs de format. |
 | 3 · Composition | Ajouter montage, lecture à partir du curseur, zoom, annulation, piano roll et export MIDI. Étendre la batterie par lots et introduire les projets multiples. | Composer, fermer, rouvrir, rééditer et réexporter un projet. |
 | 4 · Analyse | Dessiner la forme d’onde et détecter BPM, temps et transitoires, avec correction manuelle. | Résultats comparés aux tempos et repères de démos originales. |

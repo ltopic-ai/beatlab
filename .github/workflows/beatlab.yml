@@ -2,12 +2,20 @@ name: BeatLab
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: beatlab-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -17,24 +25,35 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - run: node scripts/check-pages.mjs --local
       - uses: actions/upload-artifact@v4
         with:
           name: beatlab-preview
           path: dist/
-      - uses: actions/upload-pages-artifact@v3
-        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+      - uses: actions/configure-pages@v5
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.BEATLAB_PUBLICATION == 'enabled'
+      - uses: actions/upload-pages-artifact@v4
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.BEATLAB_PUBLICATION == 'enabled'
         with:
           path: dist/
   publish:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.BEATLAB_PUBLICATION == 'enabled'
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/deploy-pages@v4
         id: deployment
+      - name: Vérifier le studio publié
+        run: node scripts/check-pages.mjs "${BEATLAB_URL}"
+        env:
+          BEATLAB_URL: ${{ steps.deployment.outputs.page_url }}
