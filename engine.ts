@@ -1,8 +1,10 @@
 export const drums = ['Kick', 'Snare', 'Clap', 'Hi-hat', 'Open hat', 'Tom', 'Rim', 'Shaker']
+export const legacyDrums = ['Kick', 'Snare', 'Hi-hat', 'Clap', 'Bass', 'Bell', 'Tom', 'Open hat']
+export type Kit = 'v1' | 'v2'
 export const tracks = ['Batterie', 'Clavier', 'Guitare', 'Voix'] as const
 export type Note = { pitch: number; at: number; length: number }
-export type Clip = { id: string; track: number; start: number; length: number; name: string; grid?: boolean[][]; notes?: Note[]; sound?: 'piano' | 'synthé'; audio?: string }
-export type Project = { bpm: number; grid: boolean[][]; clips: Clip[]; mix: { volume: number; mute: boolean }[] }
+export type Clip = { id: string; track: number; start: number; length: number; name: string; grid?: boolean[][]; kit?: Kit; notes?: Note[]; sound?: 'piano' | 'synthé'; audio?: string }
+export type Project = { bpm: number; grid: boolean[][]; kit?: Kit; clips: Clip[]; mix: { volume: number; mute: boolean }[] }
 export const blank = (): Project => ({
   bpm: 90,
   grid: drums.map((_, row) => Array.from({ length: 16 }, (_, i) =>
@@ -27,12 +29,33 @@ export function tone(ctx: BaseAudioContext, out: AudioNode, at: number, freq: nu
   oscillator.stop(at + length)
 }
 
-export function hit(ctx: BaseAudioContext, out: AudioNode, row: number, at: number) {
+export function hit(ctx: BaseAudioContext, out: AudioNode, row: number, at: number, kit?: Kit) {
+  if (kit === 'v1') {
+    const pitched = (freq: number, end: number, length: number, level: number, type: OscillatorType = 'sine') =>
+      tone(ctx, out, at, freq, length, type, level, end / freq)
+    const noise = (length: number, frequency: number, level: number, delay = 0) =>
+      noiseHit(ctx, out, row, at + delay, length, frequency, level)
+    switch (legacyDrums[row]) {
+      case 'Kick': pitched(150, 45, 0.32, 0.85); break
+      case 'Snare': noise(0.17, 1300, 0.4); pitched(185, 105, 0.11, 0.19, 'triangle'); break
+      case 'Hi-hat': noise(0.065, 6800, 0.19); break
+      case 'Clap': for (let i = 0; i < 3; i++) noise(0.085, 1900, 0.16, i * 0.017); break
+      case 'Bass': pitched(82, 54, 0.5, 0.18, 'sawtooth'); break
+      case 'Bell': pitched(830, 610, 0.48, 0.24); pitched(1245, 940, 0.34, 0.12); break
+      case 'Tom': pitched(220, 80, 0.3, 0.55, 'triangle'); break
+      case 'Open hat': noise(0.42, 5800, 0.19); break
+    }
+    return
+  }
   if (row === 0 || row === 5 || row === 6) {
     tone(ctx, out, at, [140, 0, 0, 0, 0, 220, 850][row], row === 0 ? 0.28 : 0.12, row === 6 ? 'triangle' : 'sine', row === 0 ? 0.9 : 0.4, 0.3)
     return
   }
   const length = [0, 0.18, 0.13, 0.05, 0.28, 0, 0, 0.08][row]
+  noiseHit(ctx, out, row, at, length, row < 3 ? 950 : 6200, row < 3 ? 0.55 : 0.29)
+}
+
+function noiseHit(ctx: BaseAudioContext, out: AudioNode, row: number, at: number, length: number, frequency: number, volume: number) {
   const buffer = ctx.createBuffer(1, Math.ceil(ctx.sampleRate * length), ctx.sampleRate)
   const samples = buffer.getChannelData(0)
   let seed = 103 + row
@@ -45,8 +68,8 @@ export function hit(ctx: BaseAudioContext, out: AudioNode, row: number, at: numb
   const gain = ctx.createGain()
   source.buffer = buffer
   filter.type = 'highpass'
-  filter.frequency.value = row < 3 ? 950 : 6200
-  gain.gain.value = row < 3 ? 0.55 : 0.29
+  filter.frequency.value = frequency
+  gain.gain.value = volume
   source.connect(filter).connect(gain).connect(out)
   source.start(at)
 }
@@ -80,7 +103,7 @@ export function schedule(ctx: BaseAudioContext, project: Project, at: number, bu
     if (clip.grid) {
       for (let i = Math.ceil(skip * 4); i < clip.length * 4; i++) {
         clip.grid.forEach((row, index) => {
-          if (row[i % 16]) hit(ctx, out, index, start + i * beat / 4)
+          if (row[i % 16]) hit(ctx, out, index, start + i * beat / 4, clip.kit)
         })
       }
     }

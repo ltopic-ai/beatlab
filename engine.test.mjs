@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { blank, drums, endBeat, schedule, secondsPerBeat, wav } from './engine.ts'
-import { readProject } from './project.ts'
+import { blank, drums, endBeat, hit, legacyDrums, schedule, secondsPerBeat, wav } from './engine.ts'
+import { MAX_BEATS, MAX_CLIPS, readProject, save } from './project.ts'
 
 test('la grille compte huit instruments et seize pas et importe le format V1', () => {
   const pattern = blank().grid
@@ -11,8 +11,48 @@ test('la grille compte huit instruments et seize pas et importe le format V1', (
   assert.equal(secondsPerBeat(project.bpm), 0.5)
   assert.equal(endBeat(project.clips), 4)
   assert.deepEqual(project.clips[0].grid, pattern)
+  assert.equal(project.kit, 'v1')
+  assert.equal(project.clips[0].kit, 'v1')
+  assert.equal(readProject(JSON.parse(JSON.stringify(project))).clips[0].kit, 'v1')
   assert.throws(() => readProject({ ...project, clips: [project.clips[0], project.clips[0]] }))
   assert.throws(() => readProject({ ...project, mix: [{ volume: 1 }] }))
+})
+
+test('les huit rangées V1 déclenchent les sons historiques', () => {
+  const tones = []
+  const filters = []
+  const node = { connect: () => node }
+  const param = { setValueAtTime() {}, exponentialRampToValueAtTime() {} }
+  const ctx = {
+    sampleRate: 1000,
+    createGain: () => ({ ...node, gain: { ...param } }),
+    createOscillator: () => ({
+      ...node, frequency: { ...param, setValueAtTime: hz => tones.push(hz) }, start() {}, stop() {},
+    }),
+    createBuffer: (_, length) => ({ getChannelData: () => new Float32Array(length) }),
+    createBufferSource: () => ({ ...node, start() {} }),
+    createBiquadFilter: () => ({ ...node, frequency: { set value(hz) { filters.push(hz) } } }),
+  }
+  assert.equal(legacyDrums.length, 8)
+  const expected = [
+    [[150], []], [[185], [1300]], [[], [6800]], [[], [1900, 1900, 1900]],
+    [[82], []], [[830, 1245], []], [[220], []], [[], [5800]],
+  ]
+  legacyDrums.forEach((_, i) => {
+    hit(ctx, node, i, 0, 'v1')
+    assert.deepEqual([tones.splice(0), filters.splice(0)], expected[i])
+  })
+})
+
+test('un projet hors limites est refusé avant toute écriture locale', async () => {
+  const p = blank()
+  p.clips = Array.from({ length: MAX_CLIPS }, (_, i) => ({
+    id: String(i), track: 0, start: MAX_BEATS, length: 4, name: 'Pattern', grid: p.grid,
+  }))
+  assert.equal(readProject(p).clips.length, MAX_CLIPS)
+  await assert.rejects(save({ ...p, clips: [...p.clips, { ...p.clips[0], id: 'extra' }] }), /Projet BeatLab invalide/)
+  p.clips[0].start++
+  await assert.rejects(save(p), /Projet BeatLab invalide/)
 })
 
 test('la reprise en cours de clip conserve la position audio et le mute', () => {

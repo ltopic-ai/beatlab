@@ -1,5 +1,9 @@
 import { blank, drums, tracks, type Project } from './engine.ts'
 
+export const MAX_CLIPS = 500
+export const MAX_BEATS = 2048
+const validKit = (value: unknown) => value === undefined || value === 'v1' || value === 'v2'
+
 export function readProject(data: unknown): Project {
   const p = data as Project & { version?: number; pattern?: boolean[][]; name?: string }
   const grid = (value: unknown): value is boolean[][] => Array.isArray(value) &&
@@ -7,18 +11,18 @@ export function readProject(data: unknown): Project {
   const number = (v: unknown, min: number, max: number) => typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max
   if (!p || !number(p.bpm, 50, 180)) throw Error('Tempo invalide.')
   if (p.version === 1 && grid(p.pattern)) return {
-    ...blank(), bpm: p.bpm, grid: p.pattern,
-    clips: [{ id: crypto.randomUUID(), track: 0, start: 0, length: 4, name: p.name || 'Pattern V1', grid: p.pattern }],
+    ...blank(), bpm: p.bpm, grid: p.pattern, kit: 'v1',
+    clips: [{ id: crypto.randomUUID(), track: 0, start: 0, length: 4, name: typeof p.name === 'string' && p.name ? p.name : 'Pattern V1', grid: p.pattern, kit: 'v1' }],
   }
-  if (!grid(p.grid) || !Array.isArray(p.mix) || p.mix.length !== tracks.length ||
+  if (!grid(p.grid) || !validKit(p.kit) || !Array.isArray(p.mix) || p.mix.length !== tracks.length ||
       !p.mix.every(m => m && number(m.volume, 0, 1) && typeof m.mute === 'boolean') ||
-      !Array.isArray(p.clips) || p.clips.length > 500 ||
+      !Array.isArray(p.clips) || p.clips.length > MAX_CLIPS ||
       new Set(p.clips.map(c => c?.id)).size !== p.clips.length ||
       !p.clips.every(c => c && typeof c.id === 'string' && typeof c.name === 'string' &&
         Number.isInteger(c.track) && number(c.track, 0, tracks.length - 1) &&
-        number(c.start, 0, 2048) && number(c.length, 0.01, 2048) &&
-        (c.track === 0 ? grid(c.grid) : c.track === 1 ?
-          Array.isArray(c.notes) && c.notes.every(n => n && number(n.pitch, 0, 127) && number(n.at, 0, 2048) && number(n.length, 0.01, 2048)) :
+        number(c.start, 0, MAX_BEATS) && number(c.length, 0.01, MAX_BEATS) &&
+        (c.track === 0 ? grid(c.grid) && validKit(c.kit) : c.track === 1 ?
+          Array.isArray(c.notes) && c.notes.every(n => n && number(n.pitch, 0, 127) && number(n.at, 0, MAX_BEATS) && number(n.length, 0.01, MAX_BEATS)) :
           typeof c.audio === 'string' && /^data:(audio\/|video\/|application\/octet-stream)/.test(c.audio)) &&
         (c.grid === undefined || (c.track === 0 && grid(c.grid))) &&
         (c.notes === undefined || c.track === 1) &&
@@ -48,6 +52,7 @@ export async function restore() {
 }
 
 export async function save(project: Project) {
+  readProject(project)
   const db = await database()
   return new Promise<void>((resolve, reject) => {
     const tx = db.transaction('projects', 'readwrite')
