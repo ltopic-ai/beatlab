@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#111329"><title>BeatLab — Studio Rap</title>
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#f5f5ff;background:#101225}*{box-sizing:border-box}body{margin:0}button,input{font:inherit}button{touch-action:manipulation;cursor:pointer}main{max-width:1000px;margin:auto;padding:18px 14px 50px}.top{display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-size:27px;font-weight:900;letter-spacing:-1px}.logo b{color:#9d8bff}.small{color:#aeb0d0;font-size:12px}.panel{background:#1b1e38;border:1px solid #323657;border-radius:20px;padding:16px;margin-top:15px;box-shadow:0 8px 25px #07081744}h2{font-size:17px;margin:0 0 12px}.toolbar{display:flex;flex-wrap:wrap;gap:9px;align-items:center}.btn{border:0;border-radius:13px;padding:12px 16px;background:#343958;color:white;font-weight:750}.btn.primary{background:#9d8bff;color:#111329}.btn.warn{background:#63394d}.btn:active{transform:scale(.97)}.tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:160px}.tempo input{width:100%;accent-color:#9d8bff}.tempo strong{min-width:67px;text-align:right}.seq{display:grid;gap:8px}.track{display:grid;grid-template-columns:95px repeat(16,minmax(0,1fr));gap:3px;align-items:center}.trackname{font-size:12px;font-weight:750;white-space:nowrap}.step{border:1px solid #454866;border-radius:5px;background:#2b2f4b;aspect-ratio:1;min-width:0;padding:0}.step.beat{background:#383e61}.step.on{background:var(--c);border-color:var(--c);box-shadow:0 0 7px color-mix(in srgb,var(--c),transparent 65%)}.step.current{outline:2px solid white;outline-offset:1px}.pads{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.pad{height:92px;border:0;border-radius:17px;background:linear-gradient(140deg,var(--c),#292c4c);color:white;font-weight:850;font-size:15px;box-shadow:inset 0 -5px 0 #0003}.pad:active,.pad.hit{filter:brightness(1.45);transform:scale(.97)}.field{background:#101225;color:white;border:1px solid #535777;border-radius:10px;padding:10px;width:100%;font:inherit}.saved{display:flex;flex-wrap:wrap;gap:8px}.saved button{font-size:13px}.status{color:#aeb0d0;font-size:13px;min-height:18px;margin-top:12px}.note{color:#adb0cb;font-size:12px;line-height:1.5}.line{display:flex;gap:8px;flex-wrap:wrap}.line>*{flex:1;min-width:125px}footer{padding-top:20px;text-align:center;color:#8d90ad;font-size:12px}@media(max-width:650px){.track{grid-template-columns:66px repeat(16,minmax(0,1fr));gap:2px}.trackname{font-size:10px}.step{border-radius:3px}.panel{padding:12px}.pad{height:76px;font-size:12px}.btn{padding:11px 12px}.logo{font-size:24px}}@media(max-width:380px){.track{grid-template-columns:58px repeat(16,minmax(0,1fr))}.trackname{font-size:9px}.pad{height:67px}}
+</style></head><body><main>
+<div class="top"><div><div class="logo">🥁 Beat<b>Lab</b></div><div class="small">Le studio rap 🎤</div></div><div class="small">V1.1 • studio rap</div></div>
+<section class="panel"><h2>🎛️ Ton rythme</h2><div class="toolbar"><button id="play" class="btn primary">▶ Jouer</button><button id="stop" class="btn">■ Stop</button><button id="clear" class="btn warn">Effacer</button><div class="tempo"><span>Tempo</span><input id="tempo" aria-label="Tempo" type="range" min="50" max="180" value="90"><strong id="bpm">90 BPM</strong></div></div><p class="note">Touche les carrés pour ajouter des sons. Les colonnes avancent de gauche à droite.</p><div id="seq" class="seq"></div></section>
+<section class="panel"><h2>🎹 Pads — joue avec tes doigts !</h2><div id="pads" class="pads"></div><p class="note">Tu peux jouer sur les pads pendant que ton rythme tourne. Sur ordinateur, utilise aussi les touches A, Z, E, R, Q, S, D et F.</p></section>
+<section class="panel"><h2>🎤 Enregistre ton rap</h2>
+<p class="note">Lance le beat, mets un casque pour éviter que le micro ne réenregistre la musique, puis appuie sur Enregistrer. Autorise l’accès au microphone.</p>
+<div class="toolbar"><button id="record" class="btn primary">🔴 Enregistrer la voix</button><button id="recordstop" class="btn" disabled>■ Terminer</button><span id="rectime" class="small">00:00</span></div>
+<div id="takes" style="margin-top:12px"></div>
+<p class="note">Les prises vocales restent sur cet appareil pendant cette session. Télécharge-les pour les conserver. Tu peux les écouter seules ou pendant que le beat joue.</p>
+</section>
+<section class="panel"><h2>💾 Mes compositions</h2><div class="line"><input id="songname" class="field" maxlength="50" placeholder="Nom de ton morceau" value="Mon premier beat"><button id="save" class="btn primary">Sauvegarder</button></div><div id="saved" class="saved" style="margin-top:12px"></div><div class="toolbar" style="margin-top:12px"><button id="export" class="btn">⬇ Exporter le projet</button><label class="btn" for="import">⬆ Importer un projet</label><input id="import" type="file" accept="application/json,.json" hidden></div><div class="status" id="status" role="status"></div><p class="note">Les compositions sont sauvegardées dans ce navigateur, sur cet appareil. Exporte un projet pour en garder une copie.</p></section>
+<section class="panel"><h2>🚀 Bientôt dans le studio rap</h2><p class="note">Mixage multipiste, effets vocaux et export audio combinant voix et instrumentale. La structure des projets de BeatLab pourra évoluer pour accueillir ces fonctionnalités.</p></section>
+<footer>Créé pour apprendre, jouer et inventer ses propres rythmes 💜</footer></main>
+<script>
+'use strict';
+const instruments=[
+{name:'🥁 Kick',color:'#fc718b',type:'kick'},
+{name:'👏 Snare',color:'#ffb75b',type:'snare'},
+{name:'✨ Hi-hat',color:'#7fdaff',type:'hat'},
+{name:'🎵 Clap',color:'#a58cff',type:'clap'},
+{name:'🔊 Bass',color:'#7fe0a4',type:'bass'},
+{name:'🔔 Bell',color:'#e4a0ed',type:'bell'},
+{name:'🥁 Tom',color:'#ee9576',type:'tom'},
+{name:'⚡ Open hat',color:'#e4d46b',type:'openhat'}];
+const keymap=['a','z','e','r','q','s','d','f'];
+const defaultPattern=()=>instruments.map((_,i)=>Array.from({length:16},(_,j)=>i===0?[0,4,8,12].includes(j):i===1?[4,12].includes(j):i===2?[2,6,10,14].includes(j):false));
+let pattern=defaultPattern(),bpm=90,playing=false,stepIndex=0,nextNote=0,timer=null,ctx=null,noise=null,playToken=0;
+const $=id=>document.getElementById(id),seq=$('seq');
+function initAudio(){if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)();const size=ctx.sampleRate*2;noise=ctx.createBuffer(1,size,ctx.sampleRate);const d=noise.getChannelData(0);for(let i=0;i<size;i++)d[i]=Math.random()*2-1;}if(ctx.state==='suspended')ctx.resume();}
+function envelope(g,t,vol,duration){g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.001,vol),t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+duration)}
+function tone(t,f0,f1,dur,kind='sine',vol=.6){const o=ctx.createOscillator(),g=ctx.createGain();o.type=kind;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);envelope(g,t,vol,dur);o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+dur+.02)}
+function hiss(t,dur,vol,hp){const s=ctx.createBufferSource(),filter=ctx.createBiquadFilter(),g=ctx.createGain();s.buffer=noise;filter.type='highpass';filter.frequency.value=hp;envelope(g,t,vol,dur);s.connect(filter).connect(g).connect(ctx.destination);s.start(t);s.stop(t+dur+.02)}
+function sound(i,t){if(!ctx)return;switch(i){case 0:tone(t,150,45,.32,'sine',.85);break;case 1:hiss(t,.17,.4,1300);tone(t,185,105,.11,'triangle',.19);break;case 2:hiss(t,.065,.19,6800);break;case 3:for(let k=0;k<3;k++)hiss(t+k*.017,.085,.16,1900);break;case 4:tone(t,82,54,.5,'sawtooth',.18);break;case 5:tone(t,830,610,.48,'sine',.24);tone(t,1245,940,.34,'sine',.12);break;case 6:tone(t,220,80,.3,'triangle',.55);break;case 7:hiss(t,.42,.19,5300);}}
+function render(){seq.innerHTML='';instruments.forEach((ins,i)=>{const row=document.createElement('div');row.className='track';const name=document.createElement('span');name.className='trackname';name.textContent=ins.name;row.append(name);for(let j=0;j<16;j++){const b=document.createElement('button');b.className='step'+(j%4===0?' beat':'')+(pattern[i][j]?' on':'');b.style.setProperty('--c',ins.color);b.setAttribute('aria-label',`${ins.name}, pas ${j+1}`);b.setAttribute('aria-pressed',String(pattern[i][j]));b.dataset.step=j;b.onclick=()=>{pattern[i][j]=!pattern[i][j];b.classList.toggle('on',pattern[i][j]);b.setAttribute('aria-pressed',String(pattern[i][j]));if(pattern[i][j]){initAudio();sound(i,ctx.currentTime)}};row.append(b)}seq.append(row)});}
+function highlight(j){document.querySelectorAll('.step').forEach(el=>el.classList.toggle('current',Number(el.dataset.step)===j))}
+function schedule(){if(!playing||!ctx)return;const ahead=ctx.currentTime+.12;while(nextNote<ahead){const current=stepIndex;for(let i=0;i<instruments.length;i++)if(pattern[i][current])sound(i,nextNote);const delay=Math.max(0,(nextNote-ctx.currentTime)*1000);const token=playToken;setTimeout(()=>{if(playing&&token===playToken)highlight(current)},delay);nextNote+=60/bpm/4;stepIndex=(stepIndex+1)%16}}
+function stop(){playing=false;playToken++;clearInterval(timer);timer=null;stepIndex=0;highlight(-1);$('play').textContent='▶ Jouer'}
+$('play').onclick=()=>{if(playing){stop();return}initAudio();playing=true;playToken++;nextNote=ctx.currentTime+.06;stepIndex=0;timer=setInterval(schedule,25);schedule();$('play').textContent='⏸ Pause'};
+$('stop').onclick=stop;
+$('tempo').oninput=e=>{bpm=Number(e.target.value);$('bpm').textContent=bpm+' BPM'};
+$('clear').onclick=()=>{if(confirm('Effacer tous les pas de ce rythme ?')){pattern=instruments.map(()=>Array(16).fill(false));render();message('Grille effacée')}};
+instruments.forEach((ins,i)=>{const b=document.createElement('button');b.className='pad';b.style.setProperty('--c',ins.color);b.textContent=ins.name;b.onclick=()=>{initAudio();sound(i,ctx.currentTime);b.classList.add('hit');setTimeout(()=>b.classList.remove('hit'),120)};$('pads').append(b)});
+document.addEventListener('keydown',e=>{if(e.repeat||['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;const i=keymap.indexOf(e.key.toLowerCase());if(i>=0){e.preventDefault();$('pads').children[i].click()}});
+function message(s){$('status').textContent=s}
+const storeKey='beatlab-v1-projects';
+function projects(){try{const data=JSON.parse(localStorage.getItem(storeKey)||'[]');return Array.isArray(data)?data:[]}catch{return []}}
+function snapshot(){return {version:1,name:$('songname').value.trim()||'Sans titre',bpm,pattern:pattern.map(r=>r.slice()),updated:new Date().toISOString()}}
+function valid(p){return p&&typeof p.name==='string'&&Number.isFinite(p.bpm)&&p.bpm>=50&&p.bpm<=180&&Array.isArray(p.pattern)&&p.pattern.length===8&&p.pattern.every(r=>Array.isArray(r)&&r.length===16&&r.every(v=>typeof v==='boolean'))}
+function load(p){if(!valid(p))throw Error('Projet invalide');stop();pattern=p.pattern.map(r=>r.slice());bpm=p.bpm;$('tempo').value=bpm;$('bpm').textContent=bpm+' BPM';$('songname').value=p.name;render();message('Projet chargé : '+p.name)}
+function renderSaved(){const box=$('saved');box.innerHTML='';const arr=projects();if(!arr.length){box.textContent='Aucune composition enregistrée pour le moment.';box.className='saved small';return}box.className='saved';arr.forEach((p,i)=>{const b=document.createElement('button');b.className='btn';b.textContent='🎵 '+p.name;b.onclick=()=>{try{load(p)}catch{message('Impossible de charger ce projet')}};box.append(b);const del=document.createElement('button');del.className='btn warn';del.textContent='✕';del.setAttribute('aria-label','Supprimer '+p.name);del.onclick=()=>{if(confirm('Supprimer « '+p.name+' » ?')){const a=projects();a.splice(i,1);localStorage.setItem(storeKey,JSON.stringify(a));renderSaved()}};box.append(del)})}
+$('save').onclick=()=>{try{const p=snapshot(),a=projects(),idx=a.findIndex(x=>x.name===p.name);if(idx>=0)a[idx]=p;else a.unshift(p);localStorage.setItem(storeKey,JSON.stringify(a.slice(0,40)));renderSaved();message('✓ « '+p.name+' » sauvegardé sur cet appareil')}catch{message('Le navigateur ne permet pas cette sauvegarde. Utilise Exporter le projet.')}};
+$('export').onclick=()=>{const p=snapshot(),blob=new Blob([JSON.stringify(p,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='beatlab-'+p.name.replace(/[^a-z0-9_-]/gi,'_')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);message('Projet exporté')};
+$('import').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const p=JSON.parse(await file.text());load(p)}catch{message('Ce fichier n’est pas un projet BeatLab valide.')}e.target.value=''};
+
+// Voice recording: permission is requested only when the user presses Record.
+let recorder=null,stream=null,chunks=[],recordStarted=0,recordClock=null,voiceTakes=[];
+const voiceMime=()=>['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'';
+function recordUI(active){$('record').disabled=active;$('recordstop').disabled=!active;$('record').textContent=active?'🎙️ Enregistrement…':'🔴 Enregistrer la voix'}
+function recordTime(){const seconds=Math.floor((Date.now()-recordStarted)/1000);$('rectime').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0')}
+$('record').onclick=async()=>{
+  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){message('Microphone indisponible ici. Ouvre BeatLab sur une page HTTPS ou sur localhost, avec Chrome ou Safari récent.');return}
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true},video:false});
+    chunks=[];const mime=voiceMime();
+    recorder=new MediaRecorder(stream,mime?{mimeType:mime}:undefined);
+    recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    recorder.onerror=()=>message('Une erreur est survenue pendant l’enregistrement.');
+    recorder.onstop=()=>{
+      clearInterval(recordClock);recordClock=null;recordUI(false);
+      stream?.getTracks().forEach(t=>t.stop());stream=null;
+      if(chunks.length){const blob=new Blob(chunks,{type:recorder.mimeType||'audio/webm'});voiceTakes.push({blob,url:URL.createObjectURL(blob),name:'Prise '+(voiceTakes.length+1)});renderTakes();message('✓ Voix enregistrée ! Écoute ou télécharge ta prise.')}
+    };
+    recorder.start(250);recordStarted=Date.now();recordTime();recordClock=setInterval(recordTime,500);recordUI(true);message('🎤 Enregistrement en cours. Chante ou rappe !')
+  }catch(err){stream?.getTracks().forEach(t=>t.stop());stream=null;recordUI(false);message(err.name==='NotAllowedError'?'Autorisation du microphone refusée. Vérifie les permissions du navigateur.':'Impossible d’accéder au microphone : '+err.message)}
+};
+$('recordstop').onclick=()=>{if(recorder?.state==='recording')recorder.stop()};
+function renderTakes(){
+  const root=$('takes');root.replaceChildren();
+  voiceTakes.forEach((take,i)=>{
+    const wrap=document.createElement('div');wrap.className='panel';wrap.style.marginTop='8px';wrap.style.padding='10px';
+    const title=document.createElement('div');title.textContent='🎙️ '+take.name;title.style.fontWeight='700';
+    const audio=document.createElement('audio');audio.controls=true;audio.preload='metadata';audio.src=take.url;audio.style.width='100%';audio.style.marginTop='8px';
+    const row=document.createElement('div');row.className='toolbar';
+    const download=document.createElement('a');download.className='btn';download.style.textDecoration='none';download.href=take.url;
+    const ext=take.blob.type.includes('mp4')?'m4a':'webm';download.download='BeatLab-'+take.name.replaceAll(' ','-')+'.'+ext;download.textContent='⬇ Télécharger la voix';
+    const remove=document.createElement('button');remove.className='btn warn';remove.textContent='Supprimer';remove.onclick=()=>{audio.pause();URL.revokeObjectURL(take.url);voiceTakes.splice(i,1);renderTakes()};
+    row.append(download,remove);wrap.append(title,audio,row);root.append(wrap);
+  });
+}
+render();renderSaved();
+</script></body></html>
